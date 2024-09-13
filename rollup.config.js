@@ -52,6 +52,10 @@ export default [
       babel({ babelHelpers: 'bundled' })
     ]
   },
+  { // html file
+    input: 'src/index.html',
+    output: `dist/index.html`
+  },
   { // expose TS declarations
     input: 'src/index.d.ts',
     output: [{
