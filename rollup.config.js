@@ -54,7 +54,7 @@ export default [
   },
   { // html file
     input: 'src/index.html',
-    output: `dist/index.html`
+    output: 'dist/index.html'
   },
   { // expose TS declarations
     input: 'src/index.d.ts',
