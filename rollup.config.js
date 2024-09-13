@@ -5,13 +5,13 @@ import postCss from 'rollup-plugin-postcss';
 import terser from "@rollup/plugin-terser";
 import dts from 'rollup-plugin-dts';
 
-import pkg from './package.json' assert { type: 'json' };
-const { name, homepage, version, dependencies } = pkg;
+const pkg = import('./package.json') as Record<string, any>;
 
 const umdConf = {
   format: 'umd',
+  moduleName: 'Globe', // Add this line
   name: 'Globe',
-  banner: `// Version ${version} ${name} - ${homepage}`
+  banner: `// Version ${pkg.version} ${pkg.name} - ${pkg.homepage || ''}`
 };
 
 export default [
@@ -20,15 +20,12 @@ export default [
     output: [
       {
         ...umdConf,
-        file: `dist/${name}.js`,
+        file: `dist/${pkg.name}.js`,
         sourcemap: true
       },
       { // minify
         ...umdConf,
-        file: `dist/${name}.min.js`,
-        plugins: [terser({
-          output: { comments: '/Version/' }
-        })]
+        file: `dist/${pkg.name}.min.js`
       }
     ],
     plugins: [
@@ -42,11 +39,11 @@ export default [
     input: 'src/index.js',
     output: [
       {
-        format: 'es',
-        file: `dist/${name}.mjs`
+        format: 'esm',
+        file: `dist/${pkg.name}.mjs`
       }
     ],
-    external: Object.keys(dependencies),
+    external: Object.keys(pkg.dependencies),
     plugins: [
       postCss(),
       babel({ babelHelpers: 'bundled' })
@@ -59,8 +56,8 @@ export default [
   { // expose TS declarations
     input: 'src/index.d.ts',
     output: [{
-      file: `dist/${name}.d.ts`,
-      format: 'es'
+      file: `dist/${pkg.name}.d.ts`,
+      format: 'esm'
     }],
     plugins: [dts()]
   }
