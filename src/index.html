@@ -1,0 +1,67 @@
+<head>
+  <style> 
+    body { 
+      margin: 0; 
+      max-width: 80vw; 
+      height: auto;
+      } 
+  </style>
+  
+  <script src="globe.gl.js"></script>
+</head>
+
+<body>
+  <div id="myEarth"></div> 
+  <script type="module">
+
+    import * as THREE from '/three.module.js';
+    const EARTH_RADIUS_KM = 6371; // km
+    // Gen random data
+    const N = 20;
+        const arcsData = [...Array(N).keys()].map(() => ({
+          startLat: (Math.random() - 0.5) * 180,
+          startLng: (Math.random() - 0.5) * 360,
+          endLat: (Math.random() - 0.5) * 180,
+          endLng: (Math.random() - 0.5) * 360,
+          color: [['red', 'white', 'blue', 'green'][Math.round(Math.random() * 3)], ['red', 'white', 'blue', 'green'][Math.round(Math.random() * 3)]]
+        }));
+
+    const world = Globe()
+      (document.getElementById('myEarth'))
+      // .globeImageUrl(null)
+      .globeImageUrl('earth-night.jpg')
+      .objectLat('lat')
+      .objectLng('lng')
+      .objectAltitude(0.35)
+      .objectLabel('label')
+      .labelLabel('label')
+      .labelLat('x')
+      .labelLng('y')
+      .labelText(["english name"])
+      .labelDotRadius(0.5)
+      .arcLabel(['my test network'])
+      .arcsData(arcsData)
+      .arcColor('color')
+      .arcDashLength(() => Math.random())
+      .arcDashGap(() => Math.random())
+      .arcDashAnimateTime(() => Math.random() * 4000 + 500);
+
+    const noCountryGeometry = new THREE.OctahedronGeometry(1, 0);
+    const noCountryMaterial = new THREE.MeshLambertMaterial({ color: 'palegreen', transparent: true, opacity: 0.7 });
+    world.objectThreeObject(() => new THREE.Mesh(noCountryGeometry, noCountryMaterial));
+
+    fetch('node-net-cat-prog.json')
+      .then(response => response.json())
+      .then(data => {
+        world.labelsData(data.filter(d => d.id !== null))
+
+        const objectsWithoutId = data.filter(d => d.country === false);
+        objectsWithoutId.forEach((d) => {
+          d.lat = Math.random() * (90 - (-90)) + (-90);
+          d.lng = Math.random() * (180 - (-180)) + (-180);
+        });
+        world.objectsData(objectsWithoutId);
+        })
+      .catch(error => console.error('Error fetching data:', error));
+  </script>
+</body>
