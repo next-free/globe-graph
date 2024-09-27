@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "target": "es6",
+      "module": "commonjs",
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true
+    },
+    "include": [
+      "src",
+      "rollup-plugin-serve.d.ts" // or "types/**/*.d.ts" if you put it in a types directory
+    ]
+  }
+  
